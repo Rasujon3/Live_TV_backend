@@ -25,12 +25,11 @@ Route::post('/branches', [BranchController::class, 'store']);
 Route::get('/get-comments', [CommentController::class, 'index']);
 Route::post('/comments', [CommentController::class, 'store']);
 
-// routes/web.php বা routes/api.php
 Route::get('/youtube-live', [YoutubeController::class, 'showLiveVideo']);
 Route::get('/tvs', [TvController::class, 'index']);
 Route::get('tv/{filename}', [TvController::class, 'getMusic'])->name('getMusic');
 Route::post('/tvs', [TvController::class, 'store']);
-Route::put('/tvs/{id}', [TvController::class, 'update']);
+Route::post('/update/tv', [TvController::class, 'update']);
 
 
 Route::get('/clear-cache', function () {
