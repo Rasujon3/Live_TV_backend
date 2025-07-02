@@ -13,12 +13,30 @@ class TvController extends Controller
 {
     public function index()
     {
-        $tvs = Tv::where('status', 1)->get();
+        try {
+            $tvs = Tv::where('status', 1)->get();
 
-        return response()->json([
-            'message' => 'TV list retrieved successfully',
-            'data' => $tvs
-        ]);
+            return response()->json([
+                'message' => 'TV list retrieved successfully',
+                'data' => $tvs
+            ]);
+        } catch (Exception $e) {
+
+            // Log the error
+            Log::error('Error in retrieving TV: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'statusCode' => 500,
+                'message' => 'Something went wrong!!!',
+                'data' => []
+            ], 500);
+        }
     }
 
     public function store(Request $request)
@@ -38,23 +56,43 @@ class TvController extends Controller
             ], 422);
         }
 
-        // Handle file upload
-        if ($request->hasFile('file')) {
-            $filePath = $this->storeFile($request->file('file'));
-            $img_url = $filePath ?? '';
+        try {
+            // Handle file upload
+            if ($request->hasFile('file')) {
+                $filePath = $this->storeFile($request->file('file'));
+                $img_url = $filePath ?? '';
+            }
+
+            $tv = Tv::create([
+                'name' => $request->name,
+                'channel_id' => $request->channel_id,
+                'img_url' => $img_url,
+                'status' => 1,
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'statusCode' => 201,
+                'message' => 'TV created successfully',
+                'data' => $tv
+            ], 201);
+        } catch (Exception $e) {
+
+            // Log the error
+            Log::error('Error in storing TV: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'statusCode' => 500,
+                'message' => 'Something went wrong!!!',
+                'data' => []
+            ], 500);
         }
-
-        $tv = Tv::create([
-            'name' => $request->name,
-            'channel_id' => $request->channel_id,
-            'img_url' => $img_url,
-            'status' => 1,
-        ]);
-
-        return response()->json([
-            'message' => 'TV created successfully',
-            'data' => $tv
-        ], 201);
     }
 
     /**
@@ -85,27 +123,45 @@ class TvController extends Controller
             ], 422);
         }
 
-        $tv = Tv::findOrFail($request->id);
+        try {
+            $tv = Tv::findOrFail($request->id);
 
-        $requestData = $request->except(['file', 'id']);
-        $requestData['name'] = $requestData['name'] ?? $tv->name;
-        $requestData['channel_id'] = $requestData['channel_id'] ?? $tv->title;
-        $requestData['status'] = $requestData['status'] ?? $tv->singer_name;
-        $requestData['img_url'] = $tv->img_url;
-        $requestData['updated_at'] = now();
+            $requestData = $request->except(['file', 'id']);
+            $requestData['name'] = $requestData['name'] ?? $tv->name;
+            $requestData['channel_id'] = $requestData['channel_id'] ?? $tv->title;
+            $requestData['status'] = $requestData['status'] ?? $tv->singer_name;
+            $requestData['img_url'] = $tv->img_url;
+            $requestData['updated_at'] = now();
 
-        // Handle file upload
-        if ($request->hasFile('file')) {
-            $filePath = $this->updateFile($request->file('file'), $tv);
-            $requestData['img_url'] = $filePath ?? '';
+            // Handle file upload
+            if ($request->hasFile('file')) {
+                $filePath = $this->updateFile($request->file('file'), $tv);
+                $requestData['img_url'] = $filePath ?? '';
+            }
+
+            $tv->update($requestData);
+
+            return response()->json([
+                'message' => 'TV updated successfully',
+                'data' => $tv
+            ]);
+        } catch (Exception $e) {
+
+            // Log the error
+            Log::error('Error in updating TV: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'statusCode' => 500,
+                'message' => 'Something went wrong!!!',
+                'data' => []
+            ], 500);
         }
-
-        $tv->update($requestData);
-
-        return response()->json([
-            'message' => 'TV updated successfully',
-            'data' => $tv
-        ]);
     }
 
     /**
