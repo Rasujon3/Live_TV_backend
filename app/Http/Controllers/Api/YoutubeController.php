@@ -28,12 +28,13 @@ class YoutubeController extends Controller
         ]);
 
         if ($response->failed()) {
-            return response('YouTube API Error', 500);
+            return response()->json([
+                'message' => 'YouTube API Error',
+            ], 500);
         }
 
         $data = $response->json();
 
-        // যদি ভিডিও পাওয়া যায়
         if (!empty($data['items']) && isset($data['items'][0]['id']['videoId'])) {
             $videoId = $data['items'][0]['id']['videoId'];
 
@@ -42,7 +43,9 @@ class YoutubeController extends Controller
             return response($html)->header('Content-Type', 'text/html');
         }
 
-        return response('No live video found.', 404);
+        return response()->json([
+            'message' => 'No live video found.',
+        ], 404);
     }
 }
 
