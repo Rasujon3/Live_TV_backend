@@ -28,10 +28,10 @@ class YoutubeController extends Controller
             'key' => $apiKey
         ]);
 
-        if ($response->failed()) {
-            return response()->json([
-                'message' => 'YouTube API Error',
-            ], 500);
+        if ($response->failed() || isset($response->json()['error'])) {
+            $errorMessage = $response->json()['error']['message'] ?? 'YouTube API Error';
+            $html = view('youtube.error', ['message' => $errorMessage])->render();
+            return response($html)->header('Content-Type', 'text/html');
         }
 
         $data = $response->json();
@@ -44,9 +44,8 @@ class YoutubeController extends Controller
             return response($html)->header('Content-Type', 'text/html');
         }
 
-        return response()->json([
-            'message' => 'No live video found.',
-        ], 404);
+        $html = view('youtube.error', ['message' => 'No live video found.'])->render();
+        return response($html)->header('Content-Type', 'text/html');
     }
 }
 
