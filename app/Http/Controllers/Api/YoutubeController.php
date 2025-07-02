@@ -29,7 +29,7 @@ class YoutubeController extends Controller
         ]);
 
         if ($response->failed() || isset($response->json()['error'])) {
-            $errorMessage = $response->json()['error']['message'] ?? 'YouTube API Error';
+            $errorMessage = 'Something went wrong!!!';
             $html = view('youtube.error', ['message' => $errorMessage])->render();
             return response($html)->header('Content-Type', 'text/html');
         }
@@ -44,7 +44,7 @@ class YoutubeController extends Controller
             return response($html)->header('Content-Type', 'text/html');
         }
 
-        $html = view('youtube.error', ['message' => 'No live video found.'])->render();
+        $html = view('youtube.error', ['message' => 'Nothing found.'])->render();
         return response($html)->header('Content-Type', 'text/html');
     }
 }
