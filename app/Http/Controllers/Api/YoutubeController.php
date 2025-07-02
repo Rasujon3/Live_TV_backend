@@ -16,7 +16,8 @@ class YoutubeController extends Controller
             return response('Channel ID is required.', 400);
         }
 
-        $apiKey = env('YOUTUBE_API_KEY');
+        # $apiKey = env('YOUTUBE_API_KEY');
+        $apiKey = config('services.youtube.api_key');
         $url = 'https://www.googleapis.com/youtube/v3/search';
 
         $response = Http::get($url, [
