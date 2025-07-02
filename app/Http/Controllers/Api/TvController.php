@@ -17,6 +17,8 @@ class TvController extends Controller
             $tvs = Tv::where('status', 1)->get();
 
             return response()->json([
+                'status' => true,
+                'statusCode' => 200,
                 'message' => 'TV list retrieved successfully',
                 'data' => $tvs
             ]);
@@ -51,6 +53,7 @@ class TvController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
+                'statusCode' => 422,
                 'message' => 'The given data was invalid',
                 'data' => $validator->errors()
             ], 422);
@@ -94,13 +97,6 @@ class TvController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
@@ -118,6 +114,7 @@ class TvController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
+                'statusCode' => 422,
                 'message' => 'The given data was invalid',
                 'data' => $validator->errors()
             ], 422);
@@ -142,6 +139,8 @@ class TvController extends Controller
             $tv->update($requestData);
 
             return response()->json([
+                'status' => true,
+                'statusCode' => 200,
                 'message' => 'TV updated successfully',
                 'data' => $tv
             ]);
@@ -163,13 +162,6 @@ class TvController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
