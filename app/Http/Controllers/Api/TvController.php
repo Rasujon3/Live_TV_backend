@@ -125,8 +125,8 @@ class TvController extends Controller
 
             $requestData = $request->except(['file', 'id']);
             $requestData['name'] = $requestData['name'] ?? $tv->name;
-            $requestData['channel_id'] = $requestData['channel_id'] ?? $tv->title;
-            $requestData['status'] = $requestData['status'] ?? $tv->singer_name;
+            $requestData['channel_id'] = $requestData['channel_id'] ?? $tv->channel_id;
+            $requestData['status'] = $requestData['status'] ?? $tv->status;
             $requestData['img_url'] = $tv->img_url;
             $requestData['updated_at'] = now();
 

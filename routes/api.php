@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Artisan;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/', function () {
+    return "Welcome to Live TV Backend!";
+});
 
 Route::get('/branches', [BranchController::class, 'index']);
 Route::post('/branches', [BranchController::class, 'store']);
