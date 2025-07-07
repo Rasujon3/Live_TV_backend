@@ -37,6 +37,8 @@ return [
         'api_key_3' => env('YOUTUBE_API_KEY_3'),
         'api_key_4' => env('YOUTUBE_API_KEY_4'),
         'api_key_5' => env('YOUTUBE_API_KEY_5'),
+        'api_key_6' => env('YOUTUBE_API_KEY_6'),
+        'api_key_7' => env('YOUTUBE_API_KEY_7'),
         ],
 
 ];

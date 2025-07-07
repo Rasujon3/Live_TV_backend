@@ -40,6 +40,8 @@ class YoutubeController extends Controller
                 config('services.youtube.api_key_3'),
                 config('services.youtube.api_key_4'),
                 config('services.youtube.api_key_5'),
+                config('services.youtube.api_key_6'),
+                config('services.youtube.api_key_7'),
             ];
 
             $apiKey = $apiKeys[array_rand($apiKeys)];
