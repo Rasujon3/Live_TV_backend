@@ -32,7 +32,11 @@ return [
     ],
 
     'youtube' => [
-        'api_key' => env('YOUTUBE_API_KEY'),
+        'api_key_1' => env('YOUTUBE_API_KEY_1'),
+        'api_key_2' => env('YOUTUBE_API_KEY_2'),
+        'api_key_3' => env('YOUTUBE_API_KEY_3'),
+        'api_key_4' => env('YOUTUBE_API_KEY_4'),
+        'api_key_5' => env('YOUTUBE_API_KEY_5'),
         ],
 
 ];
