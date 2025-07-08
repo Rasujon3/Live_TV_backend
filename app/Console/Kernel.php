@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        // $schedule->command('youtube:activate-all-keys')->everyMinute();
+        $schedule->command('youtube:activate-all-keys')->dailyAt('00:00');
     }
 
     /**
