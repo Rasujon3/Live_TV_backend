@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\YouTubeApiKey;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -27,13 +28,17 @@ class YoutubeController extends Controller
             if ($videoId) {
                 $html = view('youtube.live', compact('videoId'))->render();
             } else {
-                $html = view('youtube.error', ['message' => 'Nothing found from cache.'])->render();
+                # $html = view('youtube.error', ['message' => 'Nothing found from cache.'])->render();
+                Cache::put($cacheKey, null, now()->addMinutes(10));
+                // Retry with another key (recursive call)
+                return $this->showLiveVideo($request);
             }
 
             return response($html)->header('Content-Type', 'text/html');
         }
 
         try {
+            /*
             $apiKeys = [
                 config('services.youtube.api_key_1'),
                 config('services.youtube.api_key_2'),
@@ -45,6 +50,17 @@ class YoutubeController extends Controller
             ];
 
             $apiKey = $apiKeys[array_rand($apiKeys)];
+            */
+
+            $key = YouTubeApiKey::getUsableYoutubeApiKey();
+
+            if (!$key) {
+                # return response('No available API keys.', 500);
+                $html = view('youtube.error', ['message' => 'Something went wrong!'])->render();
+                return response($html)->header('Content-Type', 'text/html');
+            }
+
+            $apiKey = $key->api_key;
 
             $url = 'https://www.googleapis.com/youtube/v3/search';
 
@@ -57,15 +73,21 @@ class YoutubeController extends Controller
             ]);
 
             if ($response->failed() || isset($response->json()['error'])) {
+                $errorData = $response->json()['error'] ?? [];
+                $reason = $errorData['errors'][0]['reason'] ?? null;
+
                 Log::error('API Get Error : ', [
-                    'message' => $response->json()['error']['message'] ? $response->json()['error'] : '',
+                    'message' => $errorData,
                     'channelId' => $channelId,
                     'api_key' => $apiKey
                 ]);
 
-                $errorMessage = 'Something went wrong!!';
-                $html = view('youtube.error', ['message' => $errorMessage])->render();
-                return response($html)->header('Content-Type', 'text/html');
+                if ($reason === 'quotaExceeded') {
+                    // Mark this key as inactive
+                    $key->update(['is_active' => false]);
+                }
+                // Retry with another key (recursive call)
+                return $this->showLiveVideo($request);
             }
 
             $data = $response->json();

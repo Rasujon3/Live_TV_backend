@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\BranchController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\TvController;
+use App\Http\Controllers\Api\YoutubeApiKeyController;
 use App\Http\Controllers\Api\YoutubeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,10 @@ Route::get('/tvs', [TvController::class, 'index']);
 Route::get('tv/{filename}', [TvController::class, 'getMusic'])->name('getMusic');
 Route::post('/tvs', [TvController::class, 'store']);
 Route::post('/update/tv', [TvController::class, 'update']);
+
+Route::get('/youtube-api-keys', [YoutubeApiKeyController::class, 'index']);
+Route::post('/youtube-api-keys', [YoutubeApiKeyController::class, 'store']);
+Route::get('/activate-all', [YoutubeApiKeyController::class, 'activateAll']);
 
 
 Route::get('/clear-cache', function () {
